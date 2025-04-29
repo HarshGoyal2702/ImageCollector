@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            padding: 40px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .top-bar form {
+            display: inline;
+        }
+        .logout {
+            background: none;
+            color: crimson;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .image-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+        }
+        .image-card img {
+            width: 100%;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .image-card input {
+            margin-top: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .image-card .username {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .delete-link {
+            color: red;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="top-bar">
+        <form method="POST">
+            <button type="submit">📦 Download Selected</button>
+        </form>
+        <a href="{{ url_for('admin_logout') }}" class="logout">Logout</a>
+    </div>
+
+    <form method="POST">
+        <div class="image-grid">
+            {% for img in images %}
+            <div class="image-card">
+                <div class="username">{{ img.username }}</div>
+                {% if img.original_exists %}
+                    <img src="{{ url_for('static', filename='uploads/' + img.original_filename) }}" alt="Original Image">
+                {% else %}
+                    <p style="color: gray;">Original image not found</p>
+                {% endif %}
+                <img src="{{ url_for('static', filename='results/' + img.processed_filename) }}" alt="Processed Image">
+                <input type="checkbox" name="selected_images" value="{{ img.processed_filename }}"> Select
+                <br>
+                <a href="{{ url_for('delete_image', filename=img.processed_filename) }}" class="delete-link">🗑 Delete</a>
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+        <button type="submit">📥 Download Selected</button>
+    </form>
+</div>
+</body>
+</html>
